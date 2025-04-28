@@ -9,4 +9,12 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("level1");
     }
+    public void ShowOptions()
+    {
+        SceneManager.LoadSceneAsync("setting");
+    }
+    public void BackToStart()
+    {
+        SceneManager.LoadSceneAsync("start");
+    }
 }
