@@ -9,19 +9,7 @@ public class ChunkSpawner : MonoBehaviour
 
     void Start()
     {
-        // Spieler automatisch finden, wenn nicht gesetzt
-        if (player == null)
-        {
-            GameObject foundPlayer = GameObject.Find("Wizard");
-            if (foundPlayer != null)
-            {
-                player = foundPlayer.transform;
-            }
-            else
-            {
-                Debug.LogError("⚠️ Kein GameObject namens 'Wizard' gefunden!");
-            }
-        }
+        
 
         // Ersten Chunk spawnen
         SpawnChunk();

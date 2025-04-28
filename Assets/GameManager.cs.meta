@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1af80df2533fad14d855d23141658a39
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - popupPanel: {fileID: 1410722334204310020, guid: 090713c4f2e6d8f4b9833f860c7da82f, type: 3}
+  - popupText: {instanceID: 0}
+  - coinText: {fileID: 7642236094769007461, guid: 8b6cea4db502a2e46b8da241ff944864, type: 3}
+  - portalPrefab: {fileID: 5558501567020124395, guid: c0e5a640097b5d14e9961a67240342b8, type: 3}
+  - portalSpawnLocation: {fileID: 503854631065934983, guid: e093bfd47d75fb74d858679952d609c3, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

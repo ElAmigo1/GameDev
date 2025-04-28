@@ -10,7 +10,7 @@ public class PlayerControllerLara : MonoBehaviour
     public InputAction moveAction;
     Rigidbody2D rigidbody2d;
     Vector2 move;
-    public float speed = 3.0f;
+    float speed = 3.0f;
 
     // Health system
     public int maxHealth = 5;
@@ -53,7 +53,7 @@ public class PlayerControllerLara : MonoBehaviour
 
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);
-        animator.SetFloat("Speed", move.magnitude);
+        //animator.SetFloat("Speed", move.magnitude);
 
         if (isInvincible)
         {

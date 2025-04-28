@@ -8,6 +8,7 @@ TagManager:
   - nextLine
   - Barrel
   - Spikes
+  - Beetle
   layers:
   - Default
   - TransparentFX
