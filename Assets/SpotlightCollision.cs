@@ -19,7 +19,7 @@ public class SpotlightCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Beetle")) // Check if it's the Beetle
+        if (other.CompareTag("Enemy")) // Check if it's the Beetle
         {
             Debug.Log("Spotlight collided with Beetle!");
             PlaySound(); // Play the sound when collision happens

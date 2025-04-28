@@ -9,6 +9,7 @@ TagManager:
   - Barrel
   - Spikes
   - Beetle
+  - Enemy
   layers:
   - Default
   - TransparentFX

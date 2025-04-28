@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        coinText.text = "THIS IS THE REAL TEXT";
+        Debug.Log("Textfeld aktualisiert zu: THIS IS THE REAL TEXT");
         UpdateUI();
     }
 
@@ -42,7 +44,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Collected a coin! Total: {coinsCollected}");
 
         UpdateUI();
-        ShowPopup($"Coin {coinsCollected} collected!");
+        ShowPopup($"Coin {coinsCollected} collected!"); // <= wird IMMER gezeigt!
 
         if (coinsCollected >= coinsNeeded && !portalSpawned)
         {
@@ -54,6 +56,7 @@ public class GameManager : MonoBehaviour
     {
         if (coinText != null)
         {
+            Debug.Log($"UpdateUI called: {coinsCollected}/{coinsNeeded}");
             coinText.text = $"Coins: {coinsCollected}/{coinsNeeded}";
         }
         else
@@ -61,6 +64,8 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Coin Text UI is not assigned in GameManager!");
         }
     }
+
+
 
     private void SpawnPortal()
     {
