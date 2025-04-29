@@ -33,10 +33,27 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        coinText.text = "THIS IS THE REAL TEXT";
-        Debug.Log("Textfeld aktualisiert zu: THIS IS THE REAL TEXT");
+        if (coinText == null)
+        {
+            Debug.LogError("CoinText wurde im Inspector nicht gesetzt!");
+        }
+        else
+        {
+            Debug.Log("CoinText wurde korrekt gefunden.");
+        }
+
         UpdateUI();
     }
+
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            CollectCoin();
+        }
+    }
+
 
     public void CollectCoin()
     {
@@ -58,12 +75,14 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"UpdateUI called: {coinsCollected}/{coinsNeeded}");
             coinText.text = $"Coins: {coinsCollected}/{coinsNeeded}";
+            Debug.Log($"coinText.text jetzt auf: {coinText.text} gesetzt");
         }
         else
         {
             Debug.LogError("Coin Text UI is not assigned in GameManager!");
         }
     }
+
 
 
 
