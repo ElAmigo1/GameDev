@@ -17,7 +17,7 @@ public class PlayerControllerLara : MonoBehaviour
     public InputAction moveAction;
     Rigidbody2D rigidbody2d;
     Vector2 move;
-    float speed = 3.0f;
+    float speed = 2.0f;
 
     // Health system
     public int maxHealth = 5;

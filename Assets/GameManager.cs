@@ -61,11 +61,17 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Collected a coin! Total: {coinsCollected}");
 
         UpdateUI();
-        ShowPopup($"Coin {coinsCollected} collected!"); // <= wird IMMER gezeigt!
-
+      
         if (coinsCollected >= coinsNeeded && !portalSpawned)
         {
+            ShowPopup($"Go to the Beginning of the End!"); // <= wird IMMER gezeigt!
+
             SpawnPortal();
+        }
+        else {
+            ShowPopup($"Coin {coinsCollected} collected!"); // <= wird IMMER gezeigt!
+
+
         }
     }
 

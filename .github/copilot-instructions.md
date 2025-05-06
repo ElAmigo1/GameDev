@@ -2,7 +2,7 @@
 - Project name: GameDev
 - Unity version: Unity 2022.3.35f1
 - Active game object:
-  - Name: PopupPanel
-  - Tag: Untagged
-  - Layer: UI
+  - Name: Main Camera
+  - Tag: MainCamera
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
