@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerControllerLara : MonoBehaviour
 {
@@ -11,12 +9,23 @@ public class PlayerControllerLara : MonoBehaviour
     private AudioSource audioSource; // AudioPlayer
 
     // Movement
-    public InputAction moveAction;
     Rigidbody2D rigidbody2d;
     Vector2 move;
 
     public float normalSpeed = 3.0f;
     public float runSpeed = 5.5f;
+    private float currentSpeed;
+
+    private bool isSprinting = false;
+
+    // Sprint Timer & Cooldown
+    public float sprintDuration = 5f;
+    public float sprintCooldown = 10f;
+
+    private float sprintTimer = 0f;
+    private float cooldownTimer = 0f;
+    private bool sprintOnCooldown = false;
+
     public bool isBeingFollowed = false;
 
     // Health system
@@ -35,7 +44,7 @@ public class PlayerControllerLara : MonoBehaviour
 
     // UI
     public Image healthBar;
-
+    public float jump;
     void Start()
     {
         SaveCurrentScene();
@@ -44,16 +53,55 @@ public class PlayerControllerLara : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
 
-        if (moveAction != null)
-            moveAction.Enable();
+        currentSpeed = normalSpeed;
 
         audioSource = GetComponent<AudioSource>();
+
     }
 
     void Update()
     {
-        if (moveAction != null)
-            move = moveAction.ReadValue<Vector2>();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rigidbody2d.AddForce(new Vector2(rigidbody2d.velocity.x, jump));
+        }
+        // Sprint starten per einmaligem Shift, wenn nicht auf Cooldown
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isSprinting && !sprintOnCooldown)
+        {
+            isSprinting = true;
+            currentSpeed = runSpeed;
+            sprintTimer = sprintDuration;
+            Debug.Log("Sprint started!");
+        }
+
+        // Sprint Timer runterzählen
+        if (isSprinting)
+        {
+            sprintTimer -= Time.deltaTime;
+            if (sprintTimer <= 0)
+            {
+                // Sprint beenden & Cooldown starten
+                isSprinting = false;
+                currentSpeed = normalSpeed;
+                sprintOnCooldown = true;
+                cooldownTimer = sprintCooldown;
+                Debug.Log("Sprint ended! Cooldown started.");
+            }
+        }
+        else if (sprintOnCooldown)
+        {
+            cooldownTimer -= Time.deltaTime;
+            if (cooldownTimer <= 0)
+            {
+                sprintOnCooldown = false;
+                Debug.Log("Sprint cooldown finished! You can sprint again.");
+            }
+        }
+
+        // Bewegung lesen
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+        move = new Vector2(moveX, moveY).normalized;
 
         if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
         {
@@ -77,7 +125,6 @@ public class PlayerControllerLara : MonoBehaviour
 
     void FixedUpdate()
     {
-        float currentSpeed = isBeingFollowed ? runSpeed : normalSpeed;
         Vector2 position = rigidbody2d.position + move * currentSpeed * Time.deltaTime;
         rigidbody2d.MovePosition(position);
     }

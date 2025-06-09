@@ -1,29 +1,31 @@
 using UnityEngine;
-using UnityEngine.UI; // if using old UI Text
-using TMPro;          // if using TextMeshPro (optional)
+using TMPro; // für TextMeshPro
 
 public class GameManager : MonoBehaviour
 {
     public GameObject popupPanel;
     public TMP_Text popupText;
-    public float popupDuration = 2f; // seconds
+    public float popupDuration = 2f; // Sekunden
 
     public static GameManager instance;
 
     public int coinsCollected = 0;
     public int coinsNeeded = 3;
 
-    public TMP_Text coinText; // or TMP_Text if using TextMeshPro
-    public GameObject portalPrefab;
-    public Transform portalSpawnLocation;
+    public TMP_Text coinText; // TextMeshPro UI Text
+    public GameObject doorPrefab;           // Tür-Prefab
+    public Transform doorSpawnLocation;     // Tür-Spawnpunkt
 
-    private bool portalSpawned = false;
+    private bool doorSpawned = false;
 
     private void Awake()
     {
         // Singleton pattern
         if (instance == null)
+        {
             instance = this;
+            DontDestroyOnLoad(gameObject);  // Optional: Falls du den Manager über Szenen hinweg behalten willst
+        }
         else
         {
             Destroy(gameObject);
@@ -40,32 +42,36 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("CoinText wurde korrekt gefunden.");
+            UpdateUI();
         }
 
-        UpdateUI();
-    }
+        if (popupPanel != null)
+            popupPanel.SetActive(false);  // Popup zu Beginn ausblenden
 
+        if (doorPrefab == null || doorSpawnLocation == null)
+            Debug.LogWarning("Door Prefab oder Door Spawn Location ist nicht zugewiesen!");
+    }
 
     void Update()
     {
+        // Zum Test: Münze sammeln mit Taste C (kann entfernt werden, wenn du echtes Sammeln hast)
         if (Input.GetKeyDown(KeyCode.C))
         {
             CollectCoin();
         }
     }
 
-
     public void CollectCoin()
     {
         coinsCollected++;
-        Debug.Log($"Collected a coin! Total: {coinsCollected}");
+        Debug.Log($"Collected a Strawberry! Total: {coinsCollected}");
 
         UpdateUI();
-        ShowPopup($"Coin {coinsCollected} collected!"); // <= wird IMMER gezeigt!
+        ShowPopup($"Strawberry {coinsCollected} collected!");
 
-        if (coinsCollected >= coinsNeeded && !portalSpawned)
+        if (coinsCollected >= coinsNeeded && !doorSpawned)
         {
-            SpawnPortal();
+            SpawnDoor();
         }
     }
 
@@ -73,46 +79,43 @@ public class GameManager : MonoBehaviour
     {
         if (coinText != null)
         {
-            Debug.Log($"UpdateUI called: {coinsCollected}/{coinsNeeded}");
             coinText.text = $"Coins: {coinsCollected}/{coinsNeeded}";
             Debug.Log($"coinText.text jetzt auf: {coinText.text} gesetzt");
         }
-        else
-        {
-            Debug.LogError("Coin Text UI is not assigned in GameManager!");
-        }
     }
 
-
-
-
-    private void SpawnPortal()
+    private void SpawnDoor()
     {
-        if (portalPrefab != null && portalSpawnLocation != null)
+        if (doorPrefab != null && doorSpawnLocation != null)
         {
-            Instantiate(portalPrefab, portalSpawnLocation.position, Quaternion.identity);
-            Debug.Log("Portal spawned!");
-            portalSpawned = true;
+            Instantiate(doorPrefab, doorSpawnLocation.position, Quaternion.identity);
+            Debug.Log("Door spawned!");
+            doorSpawned = true;
         }
         else
         {
-            Debug.LogError("Portal Prefab or Spawn Location not assigned in GameManager!");
+            Debug.LogError("Door Prefab oder Door Spawn Location ist nicht gesetzt!");
         }
     }
+
     public void ShowPopup(string message)
     {
         if (popupPanel != null && popupText != null)
         {
             popupText.text = message;
             popupPanel.SetActive(true);
-            CancelInvoke(nameof(HidePopup)); // in case multiple coins are collected quickly
+            CancelInvoke(nameof(HidePopup)); // Falls mehrere Münzen schnell gesammelt werden
             Invoke(nameof(HidePopup), popupDuration);
+        }
+        else
+        {
+            Debug.LogWarning("PopupPanel oder PopupText nicht zugewiesen!");
         }
     }
 
     private void HidePopup()
     {
-        popupPanel.SetActive(false);
+        if (popupPanel != null)
+            popupPanel.SetActive(false);
     }
-
 }

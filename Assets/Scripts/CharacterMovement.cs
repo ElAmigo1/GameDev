@@ -15,18 +15,18 @@ public class CharacterMovement : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private void Update()
+    void Update()
     {
-        // Input lesen
-        moveInput = Input.GetAxisRaw("Horizontal");
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
 
-        // Animation setzen
-        animator.SetBool("isRunning", moveInput != 0);
+        animator.SetFloat("Move X", moveX);
+        animator.SetFloat("Move Y", moveY);
 
-        // Flip Sprite bei Richtung
-        if (moveInput != 0)
-            transform.localScale = new Vector3(Mathf.Sign(moveInput), 1, 1);
+        // Optional: Geschwindigkeit für Transition
+        animator.SetFloat("Speed", Mathf.Abs(moveX) + Mathf.Abs(moveY));
     }
+
 
     private void FixedUpdate()
     {
