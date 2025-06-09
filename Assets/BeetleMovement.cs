@@ -1,46 +1,110 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BeetleMovement : MonoBehaviour
 {
-    public float moveSpeed = 2f;     // Geschwindigkeit
-    public float topLimit = 4f;       // Obere Grenze (Weltposition Y)
-    public float bottomLimit = 0f;    // Untere Grenze (Weltposition Y)
+    public float moveSpeed = 2f;
 
-    private Vector2 moveDirection = Vector2.up;
+    public float topLimit = 4f;     // Optional, kannst du erstmal ignorieren
+    public float bottomLimit = 0f;  // Optional
+    public float leftLimit = -3f;   // Optional
+
+    public float followDistance = 3f; // Abstand zum Spieler zum Folgen
+    private Transform player;
+
+    public enum Direction
+    {
+        Up,
+        Left,
+        Down
+    }
+
+    private Direction moveDirection = Direction.Up;
     private Rigidbody2D rb;
+
+    private bool isFollowing = false;
+
+    private float directionChangeTimer = 0f;
+    public float changeInterval = 3f;  // Zeit in Sekunden bis Richtungswechsel
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
-        Move();
+        if (player == null) return;
 
-        // Check, ob wir das obere Limit erreichen
-        if (transform.position.y >= topLimit)
+        float distance = Vector2.Distance(transform.position, player.position);
+        isFollowing = distance <= followDistance;
+
+        if (!isFollowing)
         {
-            moveDirection = Vector2.down;
-            FlipVertically();
-        }
-        // Check, ob wir das untere Limit erreichen
-        else if (transform.position.y <= bottomLimit)
-        {
-            moveDirection = Vector2.up;
-            FlipVertically();
+            directionChangeTimer += Time.deltaTime;
+            if (directionChangeTimer >= changeInterval)
+            {
+                ChangeDirection();
+                directionChangeTimer = 0f;
+            }
         }
     }
 
-    void Move()
+    void FixedUpdate()
     {
-        rb.velocity = moveDirection.normalized * moveSpeed;
+        if (isFollowing)
+        {
+            Vector2 directionToPlayer = (player.position - transform.position).normalized;
+            rb.velocity = directionToPlayer * moveSpeed;
+
+            // Optional: Käfer drehen je nach Richtung
+            if (directionToPlayer.x != 0)
+            {
+                Vector3 scale = transform.localScale;
+                scale.x = Mathf.Sign(directionToPlayer.x) * Mathf.Abs(scale.x);
+                transform.localScale = scale;
+            }
+        }
+        else
+        {
+            MoveInPattern();
+        }
     }
 
-    void FlipVertically()
+    void MoveInPattern()
     {
-        Vector3 localScale = transform.localScale;
-        localScale.y *= -1;   // Spiegeln in Y
-        transform.localScale = localScale;
+        Vector2 velocity = Vector2.zero;
+
+        switch (moveDirection)
+        {
+            case Direction.Up:
+                velocity = Vector2.up;
+                break;
+            case Direction.Left:
+                velocity = Vector2.left;
+                break;
+            case Direction.Down:
+                velocity = Vector2.down;
+                break;
+        }
+
+        rb.velocity = velocity * moveSpeed;
+    }
+
+    void ChangeDirection()
+    {
+        // Reihenfolge: Up -> Left -> Down -> Up -> ...
+        switch (moveDirection)
+        {
+            case Direction.Up:
+                moveDirection = Direction.Left;
+                break;
+            case Direction.Left:
+                moveDirection = Direction.Down;
+                break;
+            case Direction.Down:
+                moveDirection = Direction.Up;
+                break;
+        }
     }
 }

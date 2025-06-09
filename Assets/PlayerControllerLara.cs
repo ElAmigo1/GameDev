@@ -5,19 +5,19 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-
-
-
-
 public class PlayerControllerLara : MonoBehaviour
 {
     public AudioClip deathSound; // Sterbesound
     private AudioSource audioSource; // AudioPlayer
-    // Movement variables
+
+    // Movement
     public InputAction moveAction;
     Rigidbody2D rigidbody2d;
     Vector2 move;
-    float speed = 3.0f;
+
+    public float normalSpeed = 3.0f;
+    public float runSpeed = 5.5f;
+    public bool isBeingFollowed = false;
 
     // Health system
     public int maxHealth = 5;
@@ -44,11 +44,10 @@ public class PlayerControllerLara : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
 
-        // Enable input action
         if (moveAction != null)
             moveAction.Enable();
-        audioSource = GetComponent<AudioSource>();
 
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -64,7 +63,9 @@ public class PlayerControllerLara : MonoBehaviour
 
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);
-        //animator.SetFloat("Speed", move.magnitude);
+
+        // Optional: Animationsgeschwindigkeit je nach Verfolgung
+        animator.speed = isBeingFollowed ? 1.5f : 1.0f;
 
         if (isInvincible)
         {
@@ -76,11 +77,11 @@ public class PlayerControllerLara : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector2 position = rigidbody2d.position + move * speed * Time.deltaTime;
+        float currentSpeed = isBeingFollowed ? runSpeed : normalSpeed;
+        Vector2 position = rigidbody2d.position + move * currentSpeed * Time.deltaTime;
         rigidbody2d.MovePosition(position);
     }
 
-    // Ganz unten in deinem Script hinzufügen:
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -88,7 +89,6 @@ public class PlayerControllerLara : MonoBehaviour
             TakeDamage(1);
         }
     }
-
 
     void TakeDamage(int damage)
     {
@@ -118,17 +118,16 @@ public class PlayerControllerLara : MonoBehaviour
         if (audioSource != null && deathSound != null)
         {
             audioSource.PlayOneShot(deathSound);
-            yield return new WaitForSeconds(deathSound.length+1); // so lange wie der Sound dauert warten
+            yield return new WaitForSeconds(deathSound.length + 1);
         }
         else
         {
             Debug.LogWarning("Death sound or audio source missing!");
-            yield return new WaitForSeconds(2f); // fallback, falls kein Sound da ist
+            yield return new WaitForSeconds(2f);
         }
 
-        SceneManager.LoadScene("GameOver"); // <- deine Startszene
+        SceneManager.LoadScene("GameOver");
     }
-
 
     void SaveCurrentScene()
     {

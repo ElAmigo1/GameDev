@@ -10,6 +10,7 @@ TagManager:
   - Spikes
   - Beetle
   - Enemy
+  - door
   layers:
   - Default
   - TransparentFX
